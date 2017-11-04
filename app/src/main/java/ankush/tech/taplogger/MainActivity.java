@@ -1,20 +1,163 @@
 package ankush.tech.taplogger;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference();
+    private StorageReference mStorageRef;
     private int clicks[] = new int[144];
+    private String uid = "EXP001";
+    DatabaseReference uidRef = myRef.child(uid);
+    private int btnID = 0;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private String filename;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private SensorManager mSensorManager;
+    private SensorEventListener mSensorListener;
+    private File file;
+    private FileOutputStream fOut;
+    private OutputStreamWriter writer;
+    private String label = "stop";
+    private RadioGroup radioGroup;
+    private long timestamp;
+    private double lastLatitude = 0;
+    private double lastLongitude = 0;
+    private float[] lastGyroscopeValues = {0, 0, 0};
+    private float[] lastAccelerometerValues = {0, 0, 0};
+    private float[] lastMagnetometerValues = {0, 0, 0};
+
+    public void snapshot() {
+        try {
+            writer.append(timestamp + ", " + lastLatitude + ", " + lastLongitude + ", " + lastAccelerometerValues[0] + ", " + lastAccelerometerValues[1] + ", " + lastAccelerometerValues[2] + ", " + lastGyroscopeValues[0] + ", " + lastGyroscopeValues[1] + ", " + lastGyroscopeValues[2] + ", " + lastMagnetometerValues[0] + ", " + lastMagnetometerValues[1] + ", " + lastMagnetometerValues[2] + ", " + btnID + "\n");
+            Log.d("a", Long.toString(timestamp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+    }
+
+
+    public void sensorSetup() {
+        mSensorManager = (SensorManager) this
+                .getSystemService(Context.SENSOR_SERVICE);
+        mSensorListener = new SensorEventListener() {
+            @Override
+            public void onAccuracyChanged(Sensor arg0, int arg1) {
+            }
+
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                Sensor sensor = event.sensor;
+                if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                    lastGyroscopeValues = event.values;
+                } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                    lastAccelerometerValues = event.values;
+                } else if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                    lastMagnetometerValues = event.values;
+                }
+                timestamp = event.timestamp;
+                snapshot();
+            }
+        };
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                lastLatitude = location.getLatitude();
+                lastLongitude = location.getLongitude();
+                snapshot();
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "signInAnonymously:success");
+                            user = mAuth.getCurrentUser();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "signInAnonymously:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+
+
+        sensorSetup();
 
         final Button bt001 = (Button) findViewById(R.id.button1);
         Button bt002 = (Button) findViewById(R.id.button2);
@@ -161,12 +304,40 @@ public class MainActivity extends AppCompatActivity {
         Button bt143 = (Button) findViewById(R.id.button143);
         Button bt144 = (Button) findViewById(R.id.button144);
 
+        View.OnTouchListener btnTouchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int i = v.getId() - bt001.getId();
+                Log.d("touch:", event.toString());
+                uidRef.child("Uid").child(user.getUid()).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).setValue(event.toString());
+
+                return false;
+            }
+
+            public void screenTouched() {
+            }
+        };
+
 
         View.OnClickListener btnClickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 int i = v.getId() - bt001.getId();
                 buttonClicked(i);
+                updateButton(v, i);
+            }
+
+            private void buttonClicked(int i) {
+                btnID = i;
+                clicks[i]++;
+                Log.d("bt\t", Integer.toString(i));
+                Log.d("clicks:\t", Integer.toString(clicks[i]));
+                uidRef.child("btn").child(Integer.toString(i));
+                uidRef.child("clicks").child(Integer.toString(clicks[i]));
+
+            }
+
+            private void updateButton(View v, int i) {
                 switch (clicks[i]) {
                     case 1:
                         v.setBackgroundColor(Color.parseColor("#00c0c0"));
@@ -199,13 +370,6 @@ public class MainActivity extends AppCompatActivity {
                         v.setVisibility(View.INVISIBLE);
                 }
             }
-
-            private void buttonClicked(int i) {
-                Log.d("bt\t", Integer.toString(i));
-                clicks[i]++;
-                Log.d("clicks:\t", Integer.toString(clicks[i]));
-            }
-
         };
 
         bt001.setOnClickListener(btnClickListener);
@@ -352,5 +516,212 @@ public class MainActivity extends AppCompatActivity {
         bt142.setOnClickListener(btnClickListener);
         bt143.setOnClickListener(btnClickListener);
         bt144.setOnClickListener(btnClickListener);
+
+        bt001.setOnTouchListener(btnTouchListener);
+        bt002.setOnTouchListener(btnTouchListener);
+        bt003.setOnTouchListener(btnTouchListener);
+        bt004.setOnTouchListener(btnTouchListener);
+        bt005.setOnTouchListener(btnTouchListener);
+        bt006.setOnTouchListener(btnTouchListener);
+        bt007.setOnTouchListener(btnTouchListener);
+        bt008.setOnTouchListener(btnTouchListener);
+        bt009.setOnTouchListener(btnTouchListener);
+        bt010.setOnTouchListener(btnTouchListener);
+        bt011.setOnTouchListener(btnTouchListener);
+        bt012.setOnTouchListener(btnTouchListener);
+        bt013.setOnTouchListener(btnTouchListener);
+        bt014.setOnTouchListener(btnTouchListener);
+        bt015.setOnTouchListener(btnTouchListener);
+        bt016.setOnTouchListener(btnTouchListener);
+        bt017.setOnTouchListener(btnTouchListener);
+        bt018.setOnTouchListener(btnTouchListener);
+        bt019.setOnTouchListener(btnTouchListener);
+        bt020.setOnTouchListener(btnTouchListener);
+        bt021.setOnTouchListener(btnTouchListener);
+        bt022.setOnTouchListener(btnTouchListener);
+        bt023.setOnTouchListener(btnTouchListener);
+        bt024.setOnTouchListener(btnTouchListener);
+        bt025.setOnTouchListener(btnTouchListener);
+        bt026.setOnTouchListener(btnTouchListener);
+        bt027.setOnTouchListener(btnTouchListener);
+        bt028.setOnTouchListener(btnTouchListener);
+        bt029.setOnTouchListener(btnTouchListener);
+        bt030.setOnTouchListener(btnTouchListener);
+        bt031.setOnTouchListener(btnTouchListener);
+        bt032.setOnTouchListener(btnTouchListener);
+        bt033.setOnTouchListener(btnTouchListener);
+        bt034.setOnTouchListener(btnTouchListener);
+        bt035.setOnTouchListener(btnTouchListener);
+        bt036.setOnTouchListener(btnTouchListener);
+        bt037.setOnTouchListener(btnTouchListener);
+        bt038.setOnTouchListener(btnTouchListener);
+        bt039.setOnTouchListener(btnTouchListener);
+        bt040.setOnTouchListener(btnTouchListener);
+        bt041.setOnTouchListener(btnTouchListener);
+        bt042.setOnTouchListener(btnTouchListener);
+        bt043.setOnTouchListener(btnTouchListener);
+        bt044.setOnTouchListener(btnTouchListener);
+        bt045.setOnTouchListener(btnTouchListener);
+        bt046.setOnTouchListener(btnTouchListener);
+        bt047.setOnTouchListener(btnTouchListener);
+        bt048.setOnTouchListener(btnTouchListener);
+        bt049.setOnTouchListener(btnTouchListener);
+        bt050.setOnTouchListener(btnTouchListener);
+        bt051.setOnTouchListener(btnTouchListener);
+        bt052.setOnTouchListener(btnTouchListener);
+        bt053.setOnTouchListener(btnTouchListener);
+        bt054.setOnTouchListener(btnTouchListener);
+        bt055.setOnTouchListener(btnTouchListener);
+        bt056.setOnTouchListener(btnTouchListener);
+        bt057.setOnTouchListener(btnTouchListener);
+        bt058.setOnTouchListener(btnTouchListener);
+        bt059.setOnTouchListener(btnTouchListener);
+        bt060.setOnTouchListener(btnTouchListener);
+        bt061.setOnTouchListener(btnTouchListener);
+        bt062.setOnTouchListener(btnTouchListener);
+        bt063.setOnTouchListener(btnTouchListener);
+        bt064.setOnTouchListener(btnTouchListener);
+        bt065.setOnTouchListener(btnTouchListener);
+        bt066.setOnTouchListener(btnTouchListener);
+        bt067.setOnTouchListener(btnTouchListener);
+        bt068.setOnTouchListener(btnTouchListener);
+        bt069.setOnTouchListener(btnTouchListener);
+        bt070.setOnTouchListener(btnTouchListener);
+        bt071.setOnTouchListener(btnTouchListener);
+        bt072.setOnTouchListener(btnTouchListener);
+        bt073.setOnTouchListener(btnTouchListener);
+        bt074.setOnTouchListener(btnTouchListener);
+        bt075.setOnTouchListener(btnTouchListener);
+        bt076.setOnTouchListener(btnTouchListener);
+        bt077.setOnTouchListener(btnTouchListener);
+        bt078.setOnTouchListener(btnTouchListener);
+        bt079.setOnTouchListener(btnTouchListener);
+        bt080.setOnTouchListener(btnTouchListener);
+        bt081.setOnTouchListener(btnTouchListener);
+        bt082.setOnTouchListener(btnTouchListener);
+        bt083.setOnTouchListener(btnTouchListener);
+        bt084.setOnTouchListener(btnTouchListener);
+        bt085.setOnTouchListener(btnTouchListener);
+        bt086.setOnTouchListener(btnTouchListener);
+        bt087.setOnTouchListener(btnTouchListener);
+        bt088.setOnTouchListener(btnTouchListener);
+        bt089.setOnTouchListener(btnTouchListener);
+        bt090.setOnTouchListener(btnTouchListener);
+        bt091.setOnTouchListener(btnTouchListener);
+        bt092.setOnTouchListener(btnTouchListener);
+        bt093.setOnTouchListener(btnTouchListener);
+        bt094.setOnTouchListener(btnTouchListener);
+        bt095.setOnTouchListener(btnTouchListener);
+        bt096.setOnTouchListener(btnTouchListener);
+        bt097.setOnTouchListener(btnTouchListener);
+        bt098.setOnTouchListener(btnTouchListener);
+        bt099.setOnTouchListener(btnTouchListener);
+        bt100.setOnTouchListener(btnTouchListener);
+        bt101.setOnTouchListener(btnTouchListener);
+        bt102.setOnTouchListener(btnTouchListener);
+        bt103.setOnTouchListener(btnTouchListener);
+        bt104.setOnTouchListener(btnTouchListener);
+        bt105.setOnTouchListener(btnTouchListener);
+        bt106.setOnTouchListener(btnTouchListener);
+        bt107.setOnTouchListener(btnTouchListener);
+        bt108.setOnTouchListener(btnTouchListener);
+        bt109.setOnTouchListener(btnTouchListener);
+        bt110.setOnTouchListener(btnTouchListener);
+        bt111.setOnTouchListener(btnTouchListener);
+        bt112.setOnTouchListener(btnTouchListener);
+        bt113.setOnTouchListener(btnTouchListener);
+        bt114.setOnTouchListener(btnTouchListener);
+        bt115.setOnTouchListener(btnTouchListener);
+        bt116.setOnTouchListener(btnTouchListener);
+        bt117.setOnTouchListener(btnTouchListener);
+        bt118.setOnTouchListener(btnTouchListener);
+        bt119.setOnTouchListener(btnTouchListener);
+        bt120.setOnTouchListener(btnTouchListener);
+        bt121.setOnTouchListener(btnTouchListener);
+        bt122.setOnTouchListener(btnTouchListener);
+        bt123.setOnTouchListener(btnTouchListener);
+        bt124.setOnTouchListener(btnTouchListener);
+        bt125.setOnTouchListener(btnTouchListener);
+        bt126.setOnTouchListener(btnTouchListener);
+        bt127.setOnTouchListener(btnTouchListener);
+        bt128.setOnTouchListener(btnTouchListener);
+        bt129.setOnTouchListener(btnTouchListener);
+        bt130.setOnTouchListener(btnTouchListener);
+        bt131.setOnTouchListener(btnTouchListener);
+        bt132.setOnTouchListener(btnTouchListener);
+        bt133.setOnTouchListener(btnTouchListener);
+        bt134.setOnTouchListener(btnTouchListener);
+        bt135.setOnTouchListener(btnTouchListener);
+        bt136.setOnTouchListener(btnTouchListener);
+        bt137.setOnTouchListener(btnTouchListener);
+        bt138.setOnTouchListener(btnTouchListener);
+        bt139.setOnTouchListener(btnTouchListener);
+        bt140.setOnTouchListener(btnTouchListener);
+        bt141.setOnTouchListener(btnTouchListener);
+        bt142.setOnTouchListener(btnTouchListener);
+        bt143.setOnTouchListener(btnTouchListener);
+        bt144.setOnTouchListener(btnTouchListener);
+
+
+        filename = new SimpleDateFormat("yyyyMMddHHmm'_recording.csv'").format(new Date());
+        Log.d("r", filename);
+        try {
+            file = new File(getApplicationContext().getApplicationInfo().dataDir, user.getUid() + filename);
+            fOut = new FileOutputStream(file);
+            writer = new OutputStreamWriter(fOut);
+            writer.append("timestamp, lastLatitude, lastLongitude, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], label\n");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        onResume();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (fOut != null && writer != null) {
+            try {
+                writer.close();
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mSensorManager.unregisterListener(mSensorListener);
+        locationManager.removeUpdates(locationListener);
+        Uri fileURI = Uri.fromFile(file);
+        StorageReference childRef = mStorageRef.child(user.getUid());
+
+        childRef.putFile(fileURI);
+
     }
 }
