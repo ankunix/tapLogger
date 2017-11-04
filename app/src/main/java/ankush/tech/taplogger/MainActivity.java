@@ -4,13 +4,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
-    private int clicks[] = new int[144];
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+public class MainActivity extends AppCompatActivity {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference();
+    private int clicks[] = new int[144];
+    private String uid = "EXP001";
+    DatabaseReference uidRef = myRef.child(uid);
+    private int btnID = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,12 +169,40 @@ public class MainActivity extends AppCompatActivity {
         Button bt143 = (Button) findViewById(R.id.button143);
         Button bt144 = (Button) findViewById(R.id.button144);
 
+        View.OnTouchListener btnTouchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                screenTouched();
+                Log.d("touch:", event.toString());
+                uidRef.child("btnID").child(Integer.toString(btnID)).child("clickID").child(Integer.toString(clicks[btnID])).setValue(event.toString());
+
+                return false;
+            }
+
+            public void screenTouched() {
+            }
+        };
+
 
         View.OnClickListener btnClickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 int i = v.getId() - bt001.getId();
                 buttonClicked(i);
+                updateButton(v, i);
+            }
+
+            private void buttonClicked(int i) {
+                btnID = i;
+                clicks[i]++;
+                Log.d("bt\t", Integer.toString(i));
+                Log.d("clicks:\t", Integer.toString(clicks[i]));
+                uidRef.child("btn").child(Integer.toString(i));
+                uidRef.child("clicks").child(Integer.toString(clicks[i]));
+
+            }
+
+            private void updateButton(View v, int i) {
                 switch (clicks[i]) {
                     case 1:
                         v.setBackgroundColor(Color.parseColor("#00c0c0"));
@@ -199,13 +235,6 @@ public class MainActivity extends AppCompatActivity {
                         v.setVisibility(View.INVISIBLE);
                 }
             }
-
-            private void buttonClicked(int i) {
-                Log.d("bt\t", Integer.toString(i));
-                clicks[i]++;
-                Log.d("clicks:\t", Integer.toString(clicks[i]));
-            }
-
         };
 
         bt001.setOnClickListener(btnClickListener);
@@ -352,5 +381,151 @@ public class MainActivity extends AppCompatActivity {
         bt142.setOnClickListener(btnClickListener);
         bt143.setOnClickListener(btnClickListener);
         bt144.setOnClickListener(btnClickListener);
+
+        bt001.setOnTouchListener(btnTouchListener);
+        bt002.setOnTouchListener(btnTouchListener);
+        bt003.setOnTouchListener(btnTouchListener);
+        bt004.setOnTouchListener(btnTouchListener);
+        bt005.setOnTouchListener(btnTouchListener);
+        bt006.setOnTouchListener(btnTouchListener);
+        bt007.setOnTouchListener(btnTouchListener);
+        bt008.setOnTouchListener(btnTouchListener);
+        bt009.setOnTouchListener(btnTouchListener);
+        bt010.setOnTouchListener(btnTouchListener);
+        bt011.setOnTouchListener(btnTouchListener);
+        bt012.setOnTouchListener(btnTouchListener);
+        bt013.setOnTouchListener(btnTouchListener);
+        bt014.setOnTouchListener(btnTouchListener);
+        bt015.setOnTouchListener(btnTouchListener);
+        bt016.setOnTouchListener(btnTouchListener);
+        bt017.setOnTouchListener(btnTouchListener);
+        bt018.setOnTouchListener(btnTouchListener);
+        bt019.setOnTouchListener(btnTouchListener);
+        bt020.setOnTouchListener(btnTouchListener);
+        bt021.setOnTouchListener(btnTouchListener);
+        bt022.setOnTouchListener(btnTouchListener);
+        bt023.setOnTouchListener(btnTouchListener);
+        bt024.setOnTouchListener(btnTouchListener);
+        bt025.setOnTouchListener(btnTouchListener);
+        bt026.setOnTouchListener(btnTouchListener);
+        bt027.setOnTouchListener(btnTouchListener);
+        bt028.setOnTouchListener(btnTouchListener);
+        bt029.setOnTouchListener(btnTouchListener);
+        bt030.setOnTouchListener(btnTouchListener);
+        bt031.setOnTouchListener(btnTouchListener);
+        bt032.setOnTouchListener(btnTouchListener);
+        bt033.setOnTouchListener(btnTouchListener);
+        bt034.setOnTouchListener(btnTouchListener);
+        bt035.setOnTouchListener(btnTouchListener);
+        bt036.setOnTouchListener(btnTouchListener);
+        bt037.setOnTouchListener(btnTouchListener);
+        bt038.setOnTouchListener(btnTouchListener);
+        bt039.setOnTouchListener(btnTouchListener);
+        bt040.setOnTouchListener(btnTouchListener);
+        bt041.setOnTouchListener(btnTouchListener);
+        bt042.setOnTouchListener(btnTouchListener);
+        bt043.setOnTouchListener(btnTouchListener);
+        bt044.setOnTouchListener(btnTouchListener);
+        bt045.setOnTouchListener(btnTouchListener);
+        bt046.setOnTouchListener(btnTouchListener);
+        bt047.setOnTouchListener(btnTouchListener);
+        bt048.setOnTouchListener(btnTouchListener);
+        bt049.setOnTouchListener(btnTouchListener);
+        bt050.setOnTouchListener(btnTouchListener);
+        bt051.setOnTouchListener(btnTouchListener);
+        bt052.setOnTouchListener(btnTouchListener);
+        bt053.setOnTouchListener(btnTouchListener);
+        bt054.setOnTouchListener(btnTouchListener);
+        bt055.setOnTouchListener(btnTouchListener);
+        bt056.setOnTouchListener(btnTouchListener);
+        bt057.setOnTouchListener(btnTouchListener);
+        bt058.setOnTouchListener(btnTouchListener);
+        bt059.setOnTouchListener(btnTouchListener);
+        bt060.setOnTouchListener(btnTouchListener);
+        bt061.setOnTouchListener(btnTouchListener);
+        bt062.setOnTouchListener(btnTouchListener);
+        bt063.setOnTouchListener(btnTouchListener);
+        bt064.setOnTouchListener(btnTouchListener);
+        bt065.setOnTouchListener(btnTouchListener);
+        bt066.setOnTouchListener(btnTouchListener);
+        bt067.setOnTouchListener(btnTouchListener);
+        bt068.setOnTouchListener(btnTouchListener);
+        bt069.setOnTouchListener(btnTouchListener);
+        bt070.setOnTouchListener(btnTouchListener);
+        bt071.setOnTouchListener(btnTouchListener);
+        bt072.setOnTouchListener(btnTouchListener);
+        bt073.setOnTouchListener(btnTouchListener);
+        bt074.setOnTouchListener(btnTouchListener);
+        bt075.setOnTouchListener(btnTouchListener);
+        bt076.setOnTouchListener(btnTouchListener);
+        bt077.setOnTouchListener(btnTouchListener);
+        bt078.setOnTouchListener(btnTouchListener);
+        bt079.setOnTouchListener(btnTouchListener);
+        bt080.setOnTouchListener(btnTouchListener);
+        bt081.setOnTouchListener(btnTouchListener);
+        bt082.setOnTouchListener(btnTouchListener);
+        bt083.setOnTouchListener(btnTouchListener);
+        bt084.setOnTouchListener(btnTouchListener);
+        bt085.setOnTouchListener(btnTouchListener);
+        bt086.setOnTouchListener(btnTouchListener);
+        bt087.setOnTouchListener(btnTouchListener);
+        bt088.setOnTouchListener(btnTouchListener);
+        bt089.setOnTouchListener(btnTouchListener);
+        bt090.setOnTouchListener(btnTouchListener);
+        bt091.setOnTouchListener(btnTouchListener);
+        bt092.setOnTouchListener(btnTouchListener);
+        bt093.setOnTouchListener(btnTouchListener);
+        bt094.setOnTouchListener(btnTouchListener);
+        bt095.setOnTouchListener(btnTouchListener);
+        bt096.setOnTouchListener(btnTouchListener);
+        bt097.setOnTouchListener(btnTouchListener);
+        bt098.setOnTouchListener(btnTouchListener);
+        bt099.setOnTouchListener(btnTouchListener);
+        bt100.setOnTouchListener(btnTouchListener);
+        bt101.setOnTouchListener(btnTouchListener);
+        bt102.setOnTouchListener(btnTouchListener);
+        bt103.setOnTouchListener(btnTouchListener);
+        bt104.setOnTouchListener(btnTouchListener);
+        bt105.setOnTouchListener(btnTouchListener);
+        bt106.setOnTouchListener(btnTouchListener);
+        bt107.setOnTouchListener(btnTouchListener);
+        bt108.setOnTouchListener(btnTouchListener);
+        bt109.setOnTouchListener(btnTouchListener);
+        bt110.setOnTouchListener(btnTouchListener);
+        bt111.setOnTouchListener(btnTouchListener);
+        bt112.setOnTouchListener(btnTouchListener);
+        bt113.setOnTouchListener(btnTouchListener);
+        bt114.setOnTouchListener(btnTouchListener);
+        bt115.setOnTouchListener(btnTouchListener);
+        bt116.setOnTouchListener(btnTouchListener);
+        bt117.setOnTouchListener(btnTouchListener);
+        bt118.setOnTouchListener(btnTouchListener);
+        bt119.setOnTouchListener(btnTouchListener);
+        bt120.setOnTouchListener(btnTouchListener);
+        bt121.setOnTouchListener(btnTouchListener);
+        bt122.setOnTouchListener(btnTouchListener);
+        bt123.setOnTouchListener(btnTouchListener);
+        bt124.setOnTouchListener(btnTouchListener);
+        bt125.setOnTouchListener(btnTouchListener);
+        bt126.setOnTouchListener(btnTouchListener);
+        bt127.setOnTouchListener(btnTouchListener);
+        bt128.setOnTouchListener(btnTouchListener);
+        bt129.setOnTouchListener(btnTouchListener);
+        bt130.setOnTouchListener(btnTouchListener);
+        bt131.setOnTouchListener(btnTouchListener);
+        bt132.setOnTouchListener(btnTouchListener);
+        bt133.setOnTouchListener(btnTouchListener);
+        bt134.setOnTouchListener(btnTouchListener);
+        bt135.setOnTouchListener(btnTouchListener);
+        bt136.setOnTouchListener(btnTouchListener);
+        bt137.setOnTouchListener(btnTouchListener);
+        bt138.setOnTouchListener(btnTouchListener);
+        bt139.setOnTouchListener(btnTouchListener);
+        bt140.setOnTouchListener(btnTouchListener);
+        bt141.setOnTouchListener(btnTouchListener);
+        bt142.setOnTouchListener(btnTouchListener);
+        bt143.setOnTouchListener(btnTouchListener);
+        bt144.setOnTouchListener(btnTouchListener);
+
     }
 }
