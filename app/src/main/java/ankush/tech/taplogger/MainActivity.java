@@ -1,26 +1,20 @@
 package ankush.tech.taplogger;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,19 +42,15 @@ public class MainActivity extends AppCompatActivity {
     private int clicks[] = new int[144];
     private String uid = "EXP001";
     DatabaseReference uidRef = myRef.child(uid);
-    private int btnID = 0;
+    private int btnID = -1;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String filename;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
     private SensorManager mSensorManager;
     private SensorEventListener mSensorListener;
     private File file;
     private FileOutputStream fOut;
     private OutputStreamWriter writer;
-    private String label = "stop";
-    private RadioGroup radioGroup;
     private long timestamp;
     private double lastLatitude = 0;
     private double lastLongitude = 0;
@@ -82,51 +72,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-    }
-
-
-    public void sensorSetup() {
-        mSensorManager = (SensorManager) this
-                .getSystemService(Context.SENSOR_SERVICE);
-        mSensorListener = new SensorEventListener() {
-            @Override
-            public void onAccuracyChanged(Sensor arg0, int arg1) {
-            }
-
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                Sensor sensor = event.sensor;
-                if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                    lastGyroscopeValues = event.values;
-                } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                    lastAccelerometerValues = event.values;
-                } else if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-                    lastMagnetometerValues = event.values;
-                }
-                timestamp = event.timestamp;
-                snapshot();
-            }
-        };
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                lastLatitude = location.getLatitude();
-                lastLongitude = location.getLongitude();
-                snapshot();
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
 
     }
 
@@ -155,9 +100,6 @@ public class MainActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-
-
-        sensorSetup();
 
         final Button bt001 = (Button) findViewById(R.id.button1);
         Button bt002 = (Button) findViewById(R.id.button2);
@@ -340,31 +282,31 @@ public class MainActivity extends AppCompatActivity {
             private void updateButton(View v, int i) {
                 switch (clicks[i]) {
                     case 1:
-                        v.setBackgroundColor(Color.parseColor("#00c0c0"));
+                        v.setBackgroundColor(Color.parseColor("#EF9F00"));
                         break;
                     case 2:
-                        v.setBackgroundColor(Color.parseColor("#ff040f"));
+                        v.setBackgroundColor(Color.parseColor("#56B4E9"));
                         break;
                     case 3:
-                        v.setBackgroundColor(Color.parseColor("#00f40f"));
+                        v.setBackgroundColor(Color.parseColor("#009E73"));
                         break;
                     case 4:
-                        v.setBackgroundColor(Color.parseColor("#40f42f"));
+                        v.setBackgroundColor(Color.parseColor("#F0E442"));
                         break;
                     case 5:
-                        v.setBackgroundColor(Color.parseColor("#00f40f"));
+                        v.setBackgroundColor(Color.parseColor("#0072B2"));
                         break;
                     case 6:
-                        v.setBackgroundColor(Color.parseColor("#60b40c"));
+                        v.setBackgroundColor(Color.parseColor("#D55E00"));
                         break;
                     case 7:
-                        v.setBackgroundColor(Color.parseColor("#f0000d"));
+                        v.setBackgroundColor(Color.parseColor("#CC79A7"));
                         break;
                     case 8:
-                        v.setBackgroundColor(Color.parseColor("#0f4cf1"));
+                        v.setBackgroundColor(Color.parseColor("#009E73"));
                         break;
                     case 9:
-                        v.setBackgroundColor(Color.parseColor("#63f40f"));
+                        v.setBackgroundColor(Color.parseColor("#EF9F00"));
                         break;
                     case 10:
                         v.setVisibility(View.INVISIBLE);
@@ -662,40 +604,45 @@ public class MainActivity extends AppCompatActivity {
         bt143.setOnTouchListener(btnTouchListener);
         bt144.setOnTouchListener(btnTouchListener);
 
+        mSensorManager = (SensorManager) this
+                .getSystemService(Context.SENSOR_SERVICE);
+        mSensorListener = new SensorEventListener() {
+            @Override
+            public void onAccuracyChanged(Sensor arg0, int arg1) {
+            }
+
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                Sensor sensor = event.sensor;
+                if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                    lastGyroscopeValues = event.values;
+                } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                    lastAccelerometerValues = event.values;
+                } else if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                    lastMagnetometerValues = event.values;
+                }
+                timestamp = event.timestamp;
+                snapshot();
+            }
+        };
 
         filename = new SimpleDateFormat("yyyyMMddHHmm'_recording.csv'").format(new Date());
         Log.d("r", filename);
         try {
-            file = new File(getApplicationContext().getApplicationInfo().dataDir, user.getUid() + filename);
+            file = new File(getApplicationContext().getApplicationInfo().dataDir, filename);
             fOut = new FileOutputStream(file);
             writer = new OutputStreamWriter(fOut);
             writer.append("timestamp, lastLatitude, lastLongitude, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], label\n");
+            Log.d("Stat", "Attempt");
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+            Log.d("Stat", "Listener");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        onResume();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
 
     }
 
@@ -717,7 +664,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         mSensorManager.unregisterListener(mSensorListener);
-        locationManager.removeUpdates(locationListener);
         Uri fileURI = Uri.fromFile(file);
         StorageReference childRef = mStorageRef.child(user.getUid());
 
