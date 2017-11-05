@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference myRef = database.getReference();
     private StorageReference mStorageRef;
     private int clicks[] = new int[144];
-    private String uid = "EXP001";
-    DatabaseReference uidRef = myRef.child(uid);
+    private String uid = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
     private int btnID = -1;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private DatabaseReference uidRef;
     private String filename;
     private SensorManager mSensorManager;
     private SensorEventListener mSensorListener;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     public void snapshot() {
         try {
             writer.append(timestamp + ", " + lastLatitude + ", " + lastLongitude + ", " + lastAccelerometerValues[0] + ", " + lastAccelerometerValues[1] + ", " + lastAccelerometerValues[2] + ", " + lastGyroscopeValues[0] + ", " + lastGyroscopeValues[1] + ", " + lastGyroscopeValues[2] + ", " + lastMagnetometerValues[0] + ", " + lastMagnetometerValues[1] + ", " + lastMagnetometerValues[2] + ", " + btnID + "\n");
-            Log.d("a", Long.toString(timestamp));
+            //   Log.d("a", Long.toString(timestamp));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
     }
 
@@ -88,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "signInAnonymously:success");
+                            //   Log.d("TAG", "signInAnonymously:success");
                             user = mAuth.getCurrentUser();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("TAG", "signInAnonymously:failure", task.getException());
+                            // Log.w("TAG", "signInAnonymously:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -100,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+        user = mAuth.getCurrentUser();
+        uidRef = myRef.child(user.getUid());
 
         final Button bt001 = (Button) findViewById(R.id.button1);
         Button bt002 = (Button) findViewById(R.id.button2);
@@ -250,9 +250,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int i = v.getId() - bt001.getId();
-                Log.d("touch:", event.toString());
-                uidRef.child("Uid").child(user.getUid()).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).setValue(event.toString());
-
+                //    Log.d("touch:", event.toString());
+                uidRef.child(uid).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).setValue(event.toString());
                 return false;
             }
 
@@ -272,8 +271,8 @@ public class MainActivity extends AppCompatActivity {
             private void buttonClicked(int i) {
                 btnID = i;
                 clicks[i]++;
-                Log.d("bt\t", Integer.toString(i));
-                Log.d("clicks:\t", Integer.toString(clicks[i]));
+                //     Log.d("bt\t", Integer.toString(i));
+                //   Log.d("clicks:\t", Integer.toString(clicks[i]));
                 uidRef.child("btn").child(Integer.toString(i));
                 uidRef.child("clicks").child(Integer.toString(clicks[i]));
 
@@ -627,17 +626,17 @@ public class MainActivity extends AppCompatActivity {
         };
 
         filename = new SimpleDateFormat("yyyyMMddHHmm'_recording.csv'").format(new Date());
-        Log.d("r", filename);
+        //Log.d("r", filename);
         try {
             file = new File(getApplicationContext().getApplicationInfo().dataDir, filename);
             fOut = new FileOutputStream(file);
             writer = new OutputStreamWriter(fOut);
             writer.append("timestamp, lastLatitude, lastLongitude, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], label\n");
-            Log.d("Stat", "Attempt");
+            //  Log.d("Stat", "Attempt");
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
-            Log.d("Stat", "Listener");
+            //Log.d("Stat", "Listener");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -665,7 +664,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSensorManager.unregisterListener(mSensorListener);
         Uri fileURI = Uri.fromFile(file);
-        StorageReference childRef = mStorageRef.child(user.getUid());
+        StorageReference childRef = mStorageRef.child(user.getUid()).child(uid);
 
         childRef.putFile(fileURI);
 
