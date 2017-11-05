@@ -51,16 +51,15 @@ public class MainActivity extends AppCompatActivity {
     private FileOutputStream fOut;
     private OutputStreamWriter writer;
     private long timestamp;
-    private double lastLatitude = 0;
-    private double lastLongitude = 0;
     private float[] lastGyroscopeValues = {0, 0, 0};
     private float[] lastAccelerometerValues = {0, 0, 0};
     private float[] lastMagnetometerValues = {0, 0, 0};
 
-    public void snapshot() {
+    public void snapshot(String sensorName) {
         try {
-            writer.append(timestamp + ", " + lastLatitude + ", " + lastLongitude + ", " + lastAccelerometerValues[0] + ", " + lastAccelerometerValues[1] + ", " + lastAccelerometerValues[2] + ", " + lastGyroscopeValues[0] + ", " + lastGyroscopeValues[1] + ", " + lastGyroscopeValues[2] + ", " + lastMagnetometerValues[0] + ", " + lastMagnetometerValues[1] + ", " + lastMagnetometerValues[2] + ", " + btnID + "\n");
-            //   Log.d("a", Long.toString(timestamp));
+
+            writer.append(timestamp + ", " + sensorName + ", " + lastAccelerometerValues[0] + ", " + lastAccelerometerValues[1] + ", " + lastAccelerometerValues[2] + ", " + lastGyroscopeValues[0] + ", " + lastGyroscopeValues[1] + ", " + lastGyroscopeValues[2] + ", " + lastMagnetometerValues[0] + ", " + lastMagnetometerValues[1] + ", " + lastMagnetometerValues[2] + ", " + btnID + "\n");
+            // Log.d("a", Long.toString(timestamp));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -621,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
                     lastMagnetometerValues = event.values;
                 }
                 timestamp = event.timestamp;
-                snapshot();
+                snapshot(sensor.getName());
             }
         };
 
@@ -631,7 +630,7 @@ public class MainActivity extends AppCompatActivity {
             file = new File(getApplicationContext().getApplicationInfo().dataDir, filename);
             fOut = new FileOutputStream(file);
             writer = new OutputStreamWriter(fOut);
-            writer.append("timestamp, lastLatitude, lastLongitude, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], label\n");
+            writer.append("timestamp, sensorName, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], lastBtnId\n");
             //  Log.d("Stat", "Attempt");
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
@@ -648,6 +647,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSensorManager.unregisterListener(mSensorListener);
         if (fOut != null && writer != null) {
             try {
                 writer.close();
@@ -656,13 +662,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        mSensorManager.unregisterListener(mSensorListener);
         Uri fileURI = Uri.fromFile(file);
         StorageReference childRef = mStorageRef.child(user.getUid()).child(uid);
 
