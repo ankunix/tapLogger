@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_dark.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/color-v11/abc_background_cache_hint_selector_material_dark.xml"
+    },
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_light.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/color-v11/abc_background_cache_hint_selector_material_light.xml"
+    }
+]

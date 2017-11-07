@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/52583d7fb86424c9454d0fc59f298de6e028f74c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="dd39827d2067497e60e21da48a7926000b6d4b0c">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_975c036496b0dd0d821e68a54fc4da7bbb23b935.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/4cf10a1957e64ae7b943b7e787df9eb59caddb60/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="6116e0e7069de7fc259aac8e08b84f32c2038231">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_e6c906c1907ff8eb6738c677f9334d1d5e3bb802.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ankush/tapLogger/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="5b7a25206228e3e4a71dbb5d5e116b89636a26cd">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_72bca4ac9e9519169c0323b801fa1ca71cca8f6e/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/ef9a547c463e2eec60f0d90798184f8ca11b5167/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="25438f55fc6d906a0e72f30b21487541430ede43">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_c2a37c2c863030097fb267d3ad7f60ed670ec240.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/b5cec885f7bb8ee071284a5d621b2422ade1c5d9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="433f4d6aa5f21f19552afe0e6c5eff0fedba73ad">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_1bd9294d22c4bb3fe01e50d0619489c5e64122b1.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/ankush/tapLogger/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_f9c2f390fd256e29d1a6bf7c335343442221c787/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/15fd65b98a09ce2162d4a9c74e0e79795449908d/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="756f6297eef79784f5e356dcd4f39865028b2bd0">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_61123d540ff9dc1add44a38a553628c974b534de.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/137eb57a25946138c0f2d0c91d010e4a779cba6f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="6addaba208e21c6da776d0ca75b6b23a6ccd5499">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_da6914a943de65948b240ef5c6415ff18e21ed44.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/6cb213795f2a2768a114235b541d91a2e58c949e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="8f128aeeb7e31271b28a7adb9dac1f3a6ed9f5e7">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_a60ceda04682f0debfaa44d6ab48096192de9ab0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/c19b2d8fed7e25e7f6e1b4ded700f36bcc635561/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="eb0d830e3eabb9deb9ec44869cf7ac7ea1ad794c">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_380e931d73c30d9ade3ecbaf78ca983b943bb98d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/cc1aff28cda1114a4cc3481a829a283d525c3980/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="9cca2818594cc5348806d6662133491e7ea0fa8d">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_92753255a65dedf4702595ca21d79c740afded94.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/38a6c3b4645ea8fb7c2dd80699cba2641b6b3e6d/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="09cf6aa1390f95157e8295d02be7868f568825fc">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_c5f62186a1ad0c2032debbcc5cec9c8a407af1d1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/67df0be3e84114f76333cca27b0bd341abc0419c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="8010ae6ed32828a145b25ec97bc07b7a83c6318f">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_29c6dc142275d9b36bd485b96ac2e215c7728e66.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/558beaffad60bf319c2cc4e8ead0fe239d50c250/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="4b17463c814bdc562fb0392fa3494063623a0904">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_cc64653f14d7730f0a1c0cde608c21d032b5d9c8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/ankush/.android/build-cache/3e8d10bc3664255927eb4355dccc3eed3cff6d7c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="486371f97baad8e607f332f20fee1d3dd00a731a">
+        <dex dex="/Users/ankush/tapLogger/app/build/intermediates/pre-dexed/debug/classes_84d217697f4b293914a4b842422090c090c5c898.jar" />
+    </item>
+
+</items>

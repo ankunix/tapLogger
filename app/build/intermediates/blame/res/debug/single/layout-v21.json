@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/layout-v21/notification_action_tombstone.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/layout-v21/notification_template_custom_big.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/layout-v21/notification_action.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "/Users/ankush/tapLogger/app/build/intermediates/res/merged/debug/layout-v21/notification_template_icon_group.xml",
+        "source": "/Users/ankush/.android/build-cache/2e39c2f13fc7e608a8b39866195aef12675aacd9/output/res/layout-v21/notification_template_icon_group.xml"
+    }
+]
