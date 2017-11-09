@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -250,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 int i = v.getId() - bt001.getId();
                 //    Log.d("touch:", event.toString());
-                uidRef.child(uid).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).setValue(event.toString());
+                uidRef.child(uid).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).child(Integer.toString(event.getAction())).setValue(event.toString());
                 return false;
             }
 
@@ -619,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                     lastMagnetometerValues = event.values;
                 }
-                timestamp = event.timestamp;
+                timestamp = SystemClock.uptimeMillis();
                 snapshot(sensor.getName());
             }
         };
