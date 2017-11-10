@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 int i = v.getId() - bt001.getId();
                 //    Log.d("touch:", event.toString());
-                uidRef.child(uid).child("btnID").child(Integer.toString(i)).child("clickID").child(Integer.toString(clicks[i])).child(Integer.toString(event.getAction())).setValue(event.toString());
+                uidRef.child(uid).child("btnID").child(Integer.toString(i)).child(Long.toString(SystemClock.uptimeMillis())).child(Integer.toString(clicks[i])).child(Integer.toString(event.getAction())).setValue(event.toString());
                 return false;
             }
 
