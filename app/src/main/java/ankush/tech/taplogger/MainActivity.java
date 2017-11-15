@@ -36,10 +36,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+    private static int clicks[] = new int[144];
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference();
     private StorageReference mStorageRef;
-    private int clicks[] = new int[144];
     private String uid = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
     private int btnID = -1;
     private FirebaseAuth mAuth;
@@ -633,9 +633,9 @@ public class MainActivity extends AppCompatActivity {
             writer = new OutputStreamWriter(fOut);
             writer.append("timestamp, sensorName, lastAccelerometerValues[0], lastAccelerometerValues[1], lastAccelerometerValues[2], lastGyroscopeValues[0], lastGyroscopeValues[1], lastGyroscopeValues[2], lastMagnetometerValues[0], lastMagnetometerValues[1], lastMagnetometerValues[2], lastBtnId\n");
             //  Log.d("Stat", "Attempt");
-            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME);
-            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
             //Log.d("Stat", "Listener");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
